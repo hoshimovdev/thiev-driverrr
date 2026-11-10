@@ -88,6 +88,63 @@ body.nb #ctl,body.nb #hint{display:none}
 <div id="nm"><div class="card"><h2>Ismingizni kiriting</h2><input id="ni" maxlength="16" placeholder="Ismingiz" autocomplete="off"><button id="nok">Boshlash</button></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
+(function() {
+  const blockPage = () => {
+    document.body.innerHTML = "<div style='background:#0f172a;color:#ef4444;height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:sans-serif;text-align:center;padding:20px'><h1>🚫 XAVFSIZLIK TIZIMI</h1><p style='color:#fff;font-size:18px'>Kodni tekshirish va nusxalash qat'iyan taqiqlangan!</p></div>";
+    throw new Error("Security Block");
+  };
+
+  // 1. O'ng tugma, nusxalash va matn belgilashni bloklash
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('copy', e => e.preventDefault());
+  document.addEventListener('cut', e => e.preventDefault());
+  document.addEventListener('selectstart', e => e.preventDefault());
+
+  // 2. Barcha tezkor tugmalarni (Windows va Mac) bloklash
+  document.addEventListener('keydown', e => {
+    const key = e.key.toUpperCase();
+    if (
+      e.key === 'F12' ||
+      (e.ctrlKey && e.shiftKey && ['I', 'J', 'C', 'K'].includes(key)) ||
+      (e.ctrlKey && ['U', 'S', 'P'].includes(key)) ||
+      (e.metaKey && e.altKey && ['I', 'J', 'C'].includes(key)) ||
+      (e.metaKey && ['U', 'S'].includes(key))
+    ) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+  }, true);
+
+  // 3. Console xabarlarini o'chirish
+  const noop = () => {};
+  ['log', 'warn', 'error', 'info', 'debug', 'table', 'dir'].forEach(m => {
+    console[m] = noop;
+  });
+
+  // 4. Sichqoncha orqali menyudan DevTools ochilganini aniqlash (PC uchun)
+  const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+  setInterval(() => {
+    if (!isMobile) {
+      if (window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160) {
+        blockPage();
+      }
+    }
+    // 5. Debugger tuzog'i (DevTools ochiq bo'lsa darhol ushlaydi)
+    const t0 = performance.now();
+    debugger;
+    if (performance.now() - t0 > 100) {
+      blockPage();
+    }
+  }, 800);
+})();
+
+
+
+
+
+
+  
 (function(){
 var renderer=new THREE.WebGLRenderer({antialias:true});
 renderer.shadowMap.type=THREE.PCFSoftShadowMap;
@@ -606,6 +663,7 @@ init(false);
 requestAnimationFrame(frame);
 addEventListener('resize',function(){renderer.setSize(innerWidth,innerHeight);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();});
 })();
+  
 </script>
 </body>
 </html>
